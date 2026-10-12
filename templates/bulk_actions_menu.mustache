@@ -22,29 +22,50 @@
     Example context (json):
     {
         "showbulkactions": true,
-        "id": "bulk-actions-menu",
+        "id": "bulkactionsmenuid",
         "attributes": [
             {
-                "name": "data-some-attribute",
-                "value": "some-value"
+                "name": "data-action",
+                "value": "toggle"
+            },
+            {
+                "name": "data-togglegroup",
+                "value": "summaryreport-table"
+            },
+            {
+                "name": "data-toggle",
+                "value": "action"
             }
         ],
         "actions": [
             {
-                "value": "update",
+                "value": "#update",
                 "name": "Update"
             },
             {
-                "value": "delete",
+                "value": "#delete",
                 "name": "Delete"
             }
         ],
-        "perpage": true
+        "perpage": {
+            "name": "perpage",
+            "method": "get",
+            "action": "#",
+            "classes": "singleselect",
+            "label": "Per page",
+            "formid": "randomid",
+            "id": "selectperpage",
+            "options":[
+                {"value": 50, "name": "50", "selected": true},
+                {"value": 100, "name": "100", "selected":false},
+                {"value": 200, "name": "200", "selected": false}
+            ]
+        }
     }
 }}
 
 
-<br />
+<br/>
 <div class="d-inline-block w-100">
     {{#showbulkactions}}
     <div class="buttons float-left">
