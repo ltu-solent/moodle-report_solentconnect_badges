@@ -47,23 +47,21 @@ Feature: Testing student_completes_badges in report_solentconnect_badges
       | accreditationcode                   | ABC123 |
       | accreditationinstitutioncompanycode | ABC123 |
 
-    Scenario: There are no issued badges
-      Given I am on the "report_solentconnect_badges > report index" page logged in as admin
-      And I should see "SolentConnect Badges"
-      When I click on "Search" "button" in the "region-main" "region"
-      Then I should see "Nothing to display"
+  Scenario: There are no issued badges
+    Given I am on the "report_solentconnect_badges > report index" page logged in as admin
+    And I should see "SolentConnect Badges"
+    When I click on "Search" "button" in the "region-main" "region"
+    Then I should see "Nothing to display"
 
-    Scenario: A student completes a badge
-      Given the following "core_badges > Issued badge" exists:
+  Scenario: A student completes a badge
+    Given the following "core_badges > Issued badge" exists:
       | badge        | Course Badge   |
       | user         | student1      |
       | dateissued   | 2026-01-01    |
       | dateexpire   | 2026-12-31    |
-      And I am on the "report_solentconnect_badges > report index" page logged in as admin
-      When I click on "Search" "button" in the "region-main" "region"
-      Then I should see "Course Badge"
-      And I should see "student1"
-      And I should see "2026-01-01"
-      And I should see "2026-12-31"
-      
-
+    And I am on the "report_solentconnect_badges > report index" page logged in as admin
+    When I click on "Search" "button" in the "region-main" "region"
+    Then I should see "Course Badge"
+    And I should see "student1"
+    And I should see "2026-01-01"
+    And I should see "2026-12-31"
