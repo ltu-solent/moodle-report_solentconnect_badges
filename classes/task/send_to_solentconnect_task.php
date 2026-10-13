@@ -54,10 +54,8 @@ class send_to_solentconnect_task extends scheduled_task {
             mtrace('FTP configuration is incomplete.');
             return;
         }
-        // Check SSH2 SFTP is installed on the server.
-        if (!function_exists('ssh2_connect')) {
-            mtrace('SSH2 SFTP is not installed.');
-            return;
+        if (!class_exists('phpseclib4\Net\SFTP')) {
+            require_once($CFG->dirroot . '/report/solentconnect_badges/vendor/autoload.php');
         }
         // Are there any records not yet transferred to SolentConnect? Max at 500.
         $records = $DB->get_records_sql(
@@ -110,12 +108,11 @@ class send_to_solentconnect_task extends scheduled_task {
             }
         }
         fclose($fp);
-        // Transfer the CSV file to SolentConnect via SFTP (SSH2).
-        $sftpconn = \ssh2_connect($ftphost);
-        if ($sftpconn && \ssh2_auth_password($sftpconn, $ftpuser, $ftppass)) {
-            $sftp = \ssh2_sftp($sftpconn);
-            $remotefile = "ssh2.sftp://$sftp/" . basename($csvfile) . '.csv';
-            if (\ssh2_scp_send($sftpconn, $csvfile, $remotefile)) {
+        // Transfer the CSV file to SolentConnect via SFTP (phpseclib).
+        $sftpconn = new \phpseclib4\Net\SFTP($ftphost);
+        if ($sftpconn && $sftpconn->login($ftpuser, $ftppass)) {
+            $remotefile = basename($csvfile) . '.csv';
+            if ($sftpconn->put($remotefile, $csvfile, \phpseclib4\Net\SFTP::SOURCE_LOCAL_FILE)) {
                 mtrace("Transferred $count badges to SolentConnect.");
                 // Mark the records as exported.
                 if (!empty($inparams)) {

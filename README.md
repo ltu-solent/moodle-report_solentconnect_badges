@@ -39,12 +39,14 @@ There is also a Bulk action menu to perform the same actions available on a row 
 4. Upload CSV to SolentConnect
 
 
-## FTP transfer
+## SFTP transfer
 
-For FTP you'll need to install SSH2 for SFTP on your Moodle server: https://www.php.net/manual/en/ssh2.installation.php
+For SFTP this uses [phpseclib](https://phpseclib.com/docs/ssh2/sftp), and this is included in the vendor folder and autoloaded by the task, if it's running.
 
-If you have SFTP installed, then set the `ftp_host`, `ftp_user`, `ftp_pass` and `ftp_enabled` fields according to your SFTP server.
+If you want to use SFTP, then set the `ftp_host`, `ftp_user`, `ftp_pass` and `ftp_enabled` fields according to your SFTP server.
 
 A task runs every 15 minutes and constructs a CSV of all Queued items (up to 500 items). If the FTP is successful all exported entries will be marked as exported with the timestamp in `timeexported`.
 
 If there are any remaining Queued items they will be collected on the next run.
+
+If you're not using SFTP, consider disabling the task.
