@@ -45,10 +45,6 @@ class helper {
                 'field' => 'email',
                 'type' => 'string',
             ],
-            'AccreditationCode' => [
-                'value' => get_config('report_solentconnect_badges', 'accreditationcode'),
-                'type' => 'string',
-            ],
             'AccreditationIssuedDate' => [
                 'field' => 'dateissued',
                 'type' => 'date',
@@ -66,6 +62,10 @@ class helper {
             ],
             'AccreditationInstitutionCompanyCode' => [
                 'value' => $companycode,
+                'type' => 'string',
+            ],
+            'AccreditationCode' => [
+                'value' => get_config('report_solentconnect_badges', 'accreditationcode'),
                 'type' => 'string',
             ],
             'AccreditationComments' => [
