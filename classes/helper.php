@@ -90,10 +90,12 @@ class helper {
         global $DB;
 
         $badges = $DB->get_records_sql_menu(
-            "SELECT DISTINCT(b.id) bid, b.name
-            FROM {badge} b
-            JOIN {badge_issued} bi ON bi.badgeid = b.id
-            JOIN {report_solentconnect_badges} scb ON bi.id = scb.badgeissuedid"
+            "SELECT b.id bid, b.name
+                FROM {report_solentconnect_badges} scb
+                JOIN {badge_issued} bi ON bi.id = scb.badgeissuedid
+                JOIN {badge} b ON b.id = bi.badgeid
+                GROUP BY b.id
+                ORDER BY b.name ASC"
         );
         return $badges;
     }
