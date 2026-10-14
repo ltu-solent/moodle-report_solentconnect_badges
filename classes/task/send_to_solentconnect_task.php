@@ -120,6 +120,7 @@ class send_to_solentconnect_task extends scheduled_task {
         $logs = [];
         if (!$sftpconn) {
             mtrace('Failed to initialize SFTP connection to SolentConnect.');
+            unlink($csvfile);
             return;
         }
         try {
@@ -130,11 +131,13 @@ class send_to_solentconnect_task extends scheduled_task {
                     $logs = $sftpconn->getLog();
                 }
                 $this->handleerrors($errors, $logs);
+                unlink($csvfile);
                 return;
             }
         } catch (\Exception $e) {
-            mtrace('Exception occurred while connecting to SolentConnect SFTP server: ' . $e->getMessage());
+            mtrace('Exception occurred while connecting to SolentConnect SFTP server:');
             $this->handleerrors([$e->getMessage()], $ftpdebug ? $sftpconn->getLog() : []);
+            unlink($csvfile);
             return;
         }
 
