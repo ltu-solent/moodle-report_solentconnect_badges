@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component    = 'report_solentconnect_badges';
 $plugin->release      = '1.0';
-$plugin->version      = 2026093000;
+$plugin->version      = 2026093002;
 $plugin->requires     = 2024100700;
 $plugin->supported    = [405, 502];
 $plugin->maturity     = MATURITY_STABLE;

@@ -40,7 +40,7 @@ class send_to_solentconnect_task extends scheduled_task {
      * Executes the task.
      */
     public function execute() {
-        global $DB;
+        global $CFG, $DB;
         if (!get_config('report_solentconnect_badges', 'ftp_enabled')) {
             return;
         }
@@ -48,6 +48,8 @@ class send_to_solentconnect_task extends scheduled_task {
         $ftphost = get_config('report_solentconnect_badges', 'ftp_host');
         $ftpuser = get_config('report_solentconnect_badges', 'ftp_user');
         $ftppass = get_config('report_solentconnect_badges', 'ftp_pass');
+        $ftpport = get_config('report_solentconnect_badges', 'ftp_port') ?? 22;
+        $ftpdebug = get_config('report_solentconnect_badges', 'ftp_debug');
         $companycode = get_config('report_solentconnect_badges', 'accreditationinstitutioncompanycode');
         $accreditationcode = get_config('report_solentconnect_badges', 'accreditationcode');
         if (empty($ftphost) || empty($ftpuser) || empty($ftppass) || empty($companycode) || empty($accreditationcode)) {
@@ -66,6 +68,7 @@ class send_to_solentconnect_task extends scheduled_task {
             JOIN {user} u ON u.id = bi.userid
             JOIN {course} c ON c.id = b.courseid
             WHERE scb.timeexported = 0",
+            [],
             0,
             500
         );
@@ -86,15 +89,15 @@ class send_to_solentconnect_task extends scheduled_task {
         $inparams = [];
         foreach ($records as $record) {
             $row = [];
-            foreach ($fields as $field) {
+            foreach ($fields as $key => $field) {
                 if ($field['type'] == 'date') {
                     $formatted = date($field['format'], $record->{$field['field']});
-                    $row[$field['field']] = $formatted;
+                    $row[$key] = $formatted;
                 } else if (isset($field['value'])) {
                     // Hardcoded value.
-                    $row[$field['field']] = $field['value'];
+                    $row[$key] = $field['value'];
                 } else {
-                    $row[$field['field']] = $record->{$field['field']} ?? '';
+                    $row[$key] = $record->{$field['field']} ?? '';
                 }
             }
             if (!empty($row)) {
@@ -109,29 +112,77 @@ class send_to_solentconnect_task extends scheduled_task {
         }
         fclose($fp);
         // Transfer the CSV file to SolentConnect via SFTP (phpseclib).
-        $sftpconn = new \phpseclib4\Net\SFTP($ftphost);
-        if ($sftpconn && $sftpconn->login($ftpuser, $ftppass)) {
-            $remotefile = basename($csvfile) . '.csv';
-            if ($sftpconn->put($remotefile, $csvfile, \phpseclib4\Net\SFTP::SOURCE_LOCAL_FILE)) {
-                mtrace("Transferred $count badges to SolentConnect.");
-                // Mark the records as exported.
-                if (!empty($inparams)) {
-                    [$insql, $inparams] = $DB->get_in_or_equal($inparams, SQL_PARAMS_NAMED);
-                    $DB->execute(
-                        "UPDATE {report_solentconnect_badges} SET timeexported = :timeexported WHERE id $insql",
-                        array_merge(
-                            ['timeexported' => time()],
-                            $inparams
-                        )
-                    );
-                }
-            } else {
-                mtrace('Failed to transfer CSV file to SolentConnect via SFTP.');
-            }
-        } else {
-            mtrace('Failed to connect to SolentConnect SFTP server.');
+        if ($ftpdebug) {
+            define('NET_SSH2_LOGGING', \phpseclib4\Net\SSH2::LOG_SIMPLE);
         }
+        $sftpconn = new \phpseclib4\Net\SFTP($ftphost, $ftpport);
+        $errors = [];
+        $logs = [];
+        if (!$sftpconn) {
+            mtrace('Failed to initialize SFTP connection to SolentConnect.');
+            return;
+        }
+        try {
+            if (!$sftpconn->login($ftpuser, $ftppass)) {
+                mtrace('Failed to connect to SolentConnect SFTP server.');
+                $errors = $sftpconn->getErrors();
+                if ($ftpdebug) {
+                    $logs = $sftpconn->getLog();
+                }
+                $this->handleerrors($errors, $logs);
+                return;
+            }
+        } catch (\Exception $e) {
+            mtrace('Exception occurred while connecting to SolentConnect SFTP server: ' . $e->getMessage());
+            $this->handleerrors([$e->getMessage()], $ftpdebug ? $sftpconn->getLog() : []);
+            return;
+        }
+
+        $remotefile = basename($csvfile) . '.csv';
+        $sftpconn->put($remotefile, $csvfile, \phpseclib4\Net\SFTP::SOURCE_LOCAL_FILE);
         // Delete the temporary CSV file.
         unlink($csvfile);
+        if (!$sftpconn->file_exists($remotefile)) {
+            mtrace('Failed to transfer CSV file to SolentConnect via SFTP.');
+            $errors = $sftpconn->getErrors();
+            if ($ftpdebug) {
+                $logs = $sftpconn->getLog();
+            }
+            $this->handleerrors($errors, $logs);
+            return;
+        }
+
+        mtrace("Transferred $count badges to SolentConnect in the file $remotefile.");
+        // Mark the records as exported.
+        if (!empty($inparams)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($inparams, SQL_PARAMS_NAMED);
+            $DB->execute(
+                "UPDATE {report_solentconnect_badges} SET timeexported = :timeexported WHERE id $insql",
+                array_merge(
+                    ['timeexported' => time()],
+                    $inparams
+                )
+            );
+        }
+    }
+
+    /**
+     * Output error and debug info
+     *
+     * @param array $errors
+     * @param array $logs
+     * @return void
+     */
+    private function handleerrors(array $errors, array $logs) {
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                mtrace("SFTP error: $error");
+            }
+        }
+        if (!empty($logs)) {
+            foreach ($logs as $entry) {
+                mtrace("SFTP log entry: $entry");
+            }
+        }
     }
 }

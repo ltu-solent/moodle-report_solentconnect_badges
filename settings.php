@@ -80,6 +80,15 @@ if ($ADMIN->fulltree) {
     );
 
     $settings->add(
+        new admin_setting_configcheckbox(
+            'report_solentconnect_badges/ftp_debug',
+            new lang_string('ftp_debug', 'report_solentconnect_badges'),
+            new lang_string('ftp_debug_desc', 'report_solentconnect_badges'),
+            0
+        )
+    );
+
+    $settings->add(
         new admin_setting_configtext(
             'report_solentconnect_badges/ftp_host',
             new lang_string('ftp_host', 'report_solentconnect_badges'),
@@ -101,6 +110,15 @@ if ($ADMIN->fulltree) {
             new lang_string('ftp_pass', 'report_solentconnect_badges'),
             new lang_string('ftp_pass_desc', 'report_solentconnect_badges'),
             ''
+        )
+    );
+
+    $settings->add(
+        new admin_setting_configtext(
+            'report_solentconnect_badges/ftp_port',
+            new lang_string('ftp_port', 'report_solentconnect_badges'),
+            new lang_string('ftp_port_desc', 'report_solentconnect_badges'),
+            '22'
         )
     );
 }

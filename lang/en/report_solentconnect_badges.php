@@ -50,12 +50,16 @@ $string['deletewarning'] = 'Are you sure you want to delete the selected badges 
 
 $string['exporteddate'] = 'Exported Date';
 
+$string['ftp_debug'] = 'FTP Debug';
+$string['ftp_debug_desc'] = 'Enable or disable FTP debug logging for SolentConnect Badges in the Scheduled task.';
 $string['ftp_enabled'] = 'Enable FTP';
 $string['ftp_enabled_desc'] = 'Enable or disable FTP for SolentConnect Badges. This is useful if SolentConnect is down or we want to use another method.';
 $string['ftp_host'] = 'FTP Host';
 $string['ftp_host_desc'] = 'Enter the FTP host for SolentConnect Badges.';
 $string['ftp_pass'] = 'FTP Password';
 $string['ftp_pass_desc'] = 'Enter the FTP password for SolentConnect Badges.';
+$string['ftp_port'] = 'FTP Port';
+$string['ftp_port_desc'] = 'Enter the FTP port for SolentConnect Badges. Default is 22.';
 $string['ftp_user'] = 'FTP User';
 $string['ftp_user_desc'] = 'Enter the FTP user for SolentConnect Badges.';
 $string['ftpsettings'] = 'FTP Settings';
