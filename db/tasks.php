@@ -32,8 +32,8 @@ $tasks = [
     [
         'classname' => report_solentconnect_badges\task\send_to_solentconnect_task::class,
         'blocking' => 0,
-        'minute' => '*/15',
-        'hour' => '*',
+        'minute' => '5',
+        'hour' => '7',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',

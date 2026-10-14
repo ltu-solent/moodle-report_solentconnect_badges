@@ -1,6 +1,6 @@
 # SolentConnect Badges
 
-This plugin captures Badge Awarded events on a list of specified courses (settings: courseids). When the even is triggered a badge from the course is listed in the `report_solentconnect_badges` table.
+This plugin captures Badge Awarded events on a list of specified courses (settings: courseids). When the event is triggered a badge from the course is listed in the `report_solentconnect_badges` table.
 
 There are two options for exporting the Badges to SolentConnect: Manual CSV download and FTP transfer.
 
@@ -45,7 +45,7 @@ For SFTP this uses [phpseclib](https://phpseclib.com/docs/ssh2/sftp), and this i
 
 If you want to use SFTP, then set the `ftp_host`, `ftp_user`, `ftp_pass` and `ftp_enabled` fields according to your SFTP server.
 
-A task runs every 15 minutes and constructs a CSV of all Queued items (up to 500 items). If the FTP is successful all exported entries will be marked as exported with the timestamp in `timeexported`.
+A task runs once a day and constructs a CSV of all Queued items (up to 500 items). If the FTP is successful all exported entries will be marked as exported with the timestamp in `timeexported`.
 
 If there are any remaining Queued items they will be collected on the next run.
 
