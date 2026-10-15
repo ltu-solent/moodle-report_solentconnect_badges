@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor</location>
+        <name>Composer auto loading and plugins</name>
+    </library>
+</libraries>
