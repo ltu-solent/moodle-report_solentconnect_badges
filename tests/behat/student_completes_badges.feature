@@ -92,7 +92,7 @@ Feature: Testing student_completes_badges in report_solentconnect_badges
     And I log out
     And I am on the "Course 2" "course" page logged in as "student1"
     And I follow "Bribery course"
-    Then the "View" completion condition of "GDPR course" is displayed as "done"
+    Then the "View" completion condition of "Bribery course" is displayed as "done"
     And I log out
     When I am on the "report_solentconnect_badges > report index" page logged in as admin
     And I click on "Search" "button" in the "region-main" "region"
