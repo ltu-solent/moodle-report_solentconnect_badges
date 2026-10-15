@@ -66,7 +66,7 @@ class behat_report_solentconnect_badges extends behat_base {
             if ($name == 'courseids') {
                 $courseidnumbers = array_map('trim', explode(',', $value));
                 [$insql, $inparams] = $DB->get_in_or_equal($courseidnumbers, SQL_PARAMS_NAMED);
-                $courseids = $DB->get_fieldset_select('course', 'id', "idnumber $insql", $inparams);
+                $courseids = $DB->get_fieldset_select('course', 'id', "shortname $insql", $inparams);
                 $value = implode(',', $courseids);
             }
             set_config($name, $value, 'report_solentconnect_badges');
