@@ -53,7 +53,7 @@ Feature: Testing student_completes_badges in report_solentconnect_badges
   Scenario: A student completes a badge and is queued for export
     Given I am on the "Course 1" "course" page logged in as "student1"
     And I follow "GDPR course"
-    And I should see "Done: View"
+    Then the "View" completion condition of "GDPR course" is displayed as "done"
     And I log out
     When I am on the "report_solentconnect_badges > report index" page logged in as admin
     And I click on "Search" "button" in the "region-main" "region"
@@ -92,7 +92,7 @@ Feature: Testing student_completes_badges in report_solentconnect_badges
     And I log out
     And I am on the "Course 2" "course" page logged in as "student1"
     And I follow "Bribery course"
-    And I should see "Done: View"
+    Then the "View" completion condition of "GDPR course" is displayed as "done"
     And I log out
     When I am on the "report_solentconnect_badges > report index" page logged in as admin
     And I click on "Search" "button" in the "region-main" "region"
@@ -103,7 +103,7 @@ Feature: Testing student_completes_badges in report_solentconnect_badges
   Scenario: Mark an issued badge as Exported and Requeue
     Given I am on the "Course 1" "course" page logged in as "student1"
     And I follow "GDPR course"
-    And I should see "Done: View"
+    Then the "View" completion condition of "GDPR course" is displayed as "done"
     And I log out
     And I am on the "report_solentconnect_badges > report index" page logged in as admin
     And I click on "Search" "button" in the "region-main" "region"
